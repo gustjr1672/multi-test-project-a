@@ -27,7 +27,7 @@ docker compose up -d --build $NEW_TARGET
 echo "헬스 체크 진행 중 ($NEW_TARGET 내부 포트 8080 확인)"
 for i in {1..10}
 do
-    STATUS_CODE=$(docker exec $NEW_TARGET curl -o /dev/null -s -w "%{http_code}\n" http://127.0.0.1:8080/health)
+    STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" http://127.0.0.1:$NEW_PORT/health)
     
     if [ "$STATUS_CODE" == "200" ]; then
         echo "✅ 헬스 체크 통과!"
