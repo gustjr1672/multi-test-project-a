@@ -1,0 +1,26 @@
+﻿@page
+@model ZeroDowntimeApi.pages.IndexModel
+@{
+}
+
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>무중단 배포 테스트 대시보드</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin-top: 100px; }
+        .btn { display: inline-block; padding: 15px 30px; margin: 10px; font-size: 18px; text-decoration: none; color: white; border-radius: 8px; }
+        .btn-blue { background-color: #007bff; }
+        .btn-green { background-color: #28a745; }
+    </style>
+</head>
+<body>
+    <h1>API 테스트 대시보드</h1>
+    
+    <div>
+        <a href="/delayed" class="btn btn-blue"> 지연 버전</a>
+        <a href="/quick" class="btn btn-green"> 즉시 버전</a>
+    </div>
+</body>
+</html>
+

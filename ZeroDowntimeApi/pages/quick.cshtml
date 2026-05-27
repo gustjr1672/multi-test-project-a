@@ -1,0 +1,66 @@
+﻿@page
+@model ZeroDowntimeApi.pages.quickModel
+@{
+}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>즉시 API 테스트</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <a href="/">⬅️ 메인으로 돌아가기</a>
+    <h2>즉시 응답 (Quick) API 테스트</h2>
+    <p>조회할 User ID: <input type="number" id="userId" value="1" style="padding: 8px;"></p>
+
+    <button onclick="fetchData()">조회 (호출)</button>
+
+    <h3>응답 결과:</h3>
+    <pre id="resultArea">대기 중...</pre>
+
+    <script>async function fetchData() {
+            const id = document.getElementById('userId').value;
+            const resultArea = document.getElementById('resultArea');
+
+            resultArea.innerText = "요청 중...";
+
+            try {
+                // 라우팅 충돌 방지를 위해 적용하신 /quick/ 경로를 정확히 호출합니다.
+                const response = await fetch(`/api/User/quick/${id}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultArea.innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultArea.innerText = `❌ 에러 발생:\n${error}`;
+            }
+        }</script>
+</body>
+</html>

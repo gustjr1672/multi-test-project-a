@@ -1,0 +1,6 @@
+@ZeroDowntimeApi_HostAddress = http://localhost:5126
+
+GET {{ZeroDowntimeApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

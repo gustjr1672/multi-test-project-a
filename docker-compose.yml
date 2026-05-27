@@ -1,0 +1,28 @@
+﻿#version: '3.8'
+
+# Nginx는 API 컨테이너들과 같은 네트워크를 씁니다.
+services:
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx-proxy #container_name 지정안하면 [프로젝트 폴더명]-[서비스명]-[번호] zero-downtime-test-nginx-proxy-1
+    restart: unless-stopped   # 추가: 명시적으로 끄지 않는 한 계속 재시작!
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
+  api-blue:
+    image: zero-api:${IMAGE_TAG:-latest}  # (deploy.sh로 생성한) 서버에 있는 .env에 IMAGE_TAG가 없으면 기본값으로 zero-api:latest 
+    build: .
+    restart: unless-stopped
+    environment:
+      - ConnectionStrings__DefaultConnection=${DB_URL}
+    stop_grace_period: 60s
+
+  api-green:
+    image: zero-api:${IMAGE_TAG:-latest}
+    build: .
+    restart: unless-stopped
+    environment:
+      - ConnectionStrings__DefaultConnection=${DB_URL}
+    stop_grace_period: 60s

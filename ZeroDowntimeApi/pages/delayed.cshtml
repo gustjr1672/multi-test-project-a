@@ -1,0 +1,121 @@
+﻿@page
+@model ZeroDowntimeApi.pages.delayedModel
+@{
+}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>지연 API 테스트</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            min-height: 100px;
+        }
+
+        .loading {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+        /* ⭐️ 타이머 스타일 추가 */
+        #timerDisplay {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d63384;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <a href="/">⬅️ 메인으로 돌아가기</a>
+    <h2>⏳ 동적 지연 API 테스트</h2>
+
+    <div class="input-group">
+        <label>조회할 User ID: </label>
+        <input type="number" id="userId" value="1" style="padding: 8px;">
+    </div>
+
+    <div class="input-group">
+        <label>지연 시간 (초): </label>
+        <input type="number" id="delaySeconds" value="15" style="padding: 8px;">
+    </div>
+
+    <button onclick="fetchData()">조회 (호출)</button>
+
+    <!-- ⭐️ 경과 시간을 보여줄 영역 -->
+    <div id="timerDisplay">경과 시간: 0초</div>
+
+    <h3>응답 결과:</h3>
+    <pre id="resultArea">대기 중...</pre>
+
+    <script>
+        // 타이머를 제어할 전역 변수 선언
+        let timerInterval;
+
+        async function fetchData() {
+            const id = document.getElementById('userId').value;
+            const delay = document.getElementById('delaySeconds').value;
+            const resultArea = document.getElementById('resultArea');
+            const timerDisplay = document.getElementById('timerDisplay');
+
+            // 1. 초기화
+            let elapsedSeconds = 0;
+            if (timerInterval) clearInterval(timerInterval); // 기존 타이머가 돌고 있다면 초기화
+            timerDisplay.innerText = `경과 시간: 0초`;
+            resultArea.style.color = "black";
+            resultArea.innerHTML = `<span class="loading">요청 중... ${delay}초를 기다리는 중</span>`;
+
+            // 2. 1초마다 초시계 증가 로직 실행
+            timerInterval = setInterval(() => {
+                elapsedSeconds++;
+                timerDisplay.innerText = `경과 시간: ${elapsedSeconds}초`;
+            }, 1000); // 1000ms = 1초
+
+            try {
+                // API 호출 (URL 파라미터 전달)
+                const response = await fetch(`/api/User/${id}?delay=${delay}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultArea.innerText = JSON.stringify(data, null, 2);
+                timerDisplay.innerText += ` (정상 완료)`;
+
+            } catch (error) {
+                resultArea.innerText = `에러 발생: 통신이 끊어졌거나 서버가 죽었습니다.\n${error}`;
+                resultArea.style.color = "red";
+                timerDisplay.innerText += ` (에러 발생)`;
+
+            } finally {
+                // 3. 통신이 성공하든 실패하든 끝났으므로 타이머를 멈춥니다.
+                clearInterval(timerInterval);
+            }
+        }
+    </script>
+</body>
+</html>
