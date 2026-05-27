@@ -1,7 +1,7 @@
 ﻿version: '3.8'
 
 services:
-  api-blue:
+  api-blue-a:
     image: zero-api-a:${IMAGE_TAG:-latest}
     build: .
     container_name: api-blue-a
@@ -13,7 +13,7 @@ services:
       - "127.0.0.1:8080:8080" 
     stop_grace_period: 60s
 
-  api-green:
+  api-green-a:
     image: zero-api-a:${IMAGE_TAG:-latest}
     build: .
     container_name: api-green-a
